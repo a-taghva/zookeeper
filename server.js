@@ -3,8 +3,28 @@ const app = express();
 
 const { animals } = require('./data/animals');
 
+function filterByQuery(query, animalsArr) {
+	let filteredResults = animalsArr;
+
+	if (query.diet) {
+		filteredResults = filteredResults.filter(animal => animal.diet === query.diet);
+	};
+
+	if (query.species) {
+		filteredResults = filteredResults.filter(animal => animal.species === query.species);
+	};
+
+	if (query.name) {
+		filteredResults = filteredResults.filter(animal => animal.name === query.name);
+	};
+};
+
 app.get('/api/animals', (req, res) => {
-	res.json(animals);
+  let results = animals;
+  if (req.query) {
+    results = filterByQuery(req.query, results);
+  };
+  res.json(results);
 });
 
 app.listen(3001, () => {
