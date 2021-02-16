@@ -1,6 +1,10 @@
 const express = require('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
+// parse incoming string or array data
+app.use(express.urlencoded({ extended: true }));
+// parse incoming JSON data
+app.use(express.json());
 
 const { animals } = require('./data/animals');
 
@@ -53,6 +57,11 @@ app.get('/api/animals', (req, res) => {
 app.get('/api/animals/:id', (req, res) => {
 	const result = findById(req.params.id, animals);
 	result ? res.json(result) : res.send(404);
+});
+
+app.post('/api/animals', (req, res) => {
+	console.log(req.body);
+	res.json(req.body);
 });
 
 app.listen(PORT, () => {
