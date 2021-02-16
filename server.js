@@ -5,20 +5,20 @@ const { animals } = require('./data/animals');
 
 const filterByQuery = (query, animalsArr) => {
     let filteredResults = animalsArr;
-    let personalityTraitsArr = [];
+	let personalityTraitsArr = [];
 
-	if (query.personalityTraitsArr) {
-		if (typeof personalityTraitsArr === 'string') {
-			persnolaityTraitsArr = [query.personalityTraits];
+	if (query.personalityTraits) {
+		if (typeof query.personalityTraits === 'string') {
+			personalityTraitsArr = [query.personalityTraits];
 		} else {
-			personlityTraitsArr = query.personliatyArr;
+			personalityTraitsArr = query.personalityTraits;
 		};
 
 		personalityTraitsArr.forEach(trait => {
 			filteredResults = filteredResults.filter(
 				animal => animal.personalityTraits.indexOf(trait) !== -1
 			);
-		}); 
+        }); 
 	};
 
 	if (query.diet) {
