@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const app = express();
 // parse incoming string or array data
 // { extended: true } informs server that there may be sub-array data nested in it
@@ -9,6 +9,8 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 // parse incoming JSON data
 app.use(express.json());
+
+app.use(express.static('public'));
 
 const { animals } = require('./data/animals');
 
@@ -65,7 +67,6 @@ const validateAnimal = animal => {
 const createNewAnimal = (body, animalsArr) => {
 	const animal = body;
 	animalsArr.push(animal);
-	console.log(JSON.stringify({ animals: animalsArr }, null, 4));
 
 	fs.writeFileSync(
 		path.join(__dirname, './data/animals.json'),
@@ -98,6 +99,10 @@ app.post('/api/animals', (req, res) => {
 		const animal = createNewAnimal(req.body, animals);
 		res.json(animal);
 	};
+});
+
+app.get('/', (req, res) => {
+	res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 app.listen(PORT, () => {
