@@ -50,6 +50,18 @@ const findById = (id, animalsArr) => {
 	return result;
 };
 
+const validateAnimal = animal => {
+	if (!animal.name || typeof animal.name !== 'string') return false;
+
+	if (!animal.species || typeof animal.species !== 'string') return false;
+
+	if (!animal.diet || typeof animal.diet !== 'string') return false;
+	
+	if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) return false;
+
+	return true;
+};
+
 const createNewAnimal = (body, animalsArr) => {
 	const animal = body;
 	animalsArr.push(animal);
@@ -78,9 +90,14 @@ app.get('/api/animals/:id', (req, res) => {
 
 app.post('/api/animals', (req, res) => {
 	req.body.id = animals.length.toString();
-	createNewAnimal(req.body, animals);
 
-	res.json(req.body);
+	// if any data in req.body is incorrect, send 400 error back
+	if (!validateAnimal(req.body)) {
+		res.status(400).send('The animal is not properly formatted.');
+	} else {
+		const animal = createNewAnimal(req.body, animals);
+		res.json(animal);
+	};
 });
 
 app.listen(PORT, () => {
