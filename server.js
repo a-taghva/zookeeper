@@ -1,7 +1,11 @@
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 const app = express();
 // parse incoming string or array data
+// { extended: true } informs server that there may be sub-array data nested in it
+// so it needs to look as deep into the POST data as possible to parse all of the data correctly
 app.use(express.urlencoded({ extended: true }));
 // parse incoming JSON data
 app.use(express.json());
@@ -42,8 +46,21 @@ const filterByQuery = (query, animalsArr) => {
 };
 
 const findById = (id, animalsArr) => {
-	const result = animalsArr.filter(animal => animal.id === id)[0];
+	const result = animalsArr.filter(animal => animal.id === id);
 	return result;
+};
+
+const createNewAnimal = (body, animalsArr) => {
+	const animal = body;
+	animalsArr.push(animal);
+	console.log(JSON.stringify({ animals: animalsArr }, null, 4));
+
+	fs.writeFileSync(
+		path.join(__dirname, './data/animals.json'),
+		JSON.stringify({ animals: animalsArr }, null , 2)
+	);
+
+	return animal;
 };
 
 app.get('/api/animals', (req, res) => {
@@ -60,7 +77,9 @@ app.get('/api/animals/:id', (req, res) => {
 });
 
 app.post('/api/animals', (req, res) => {
-	console.log(req.body);
+	req.body.id = animals.length.toString();
+	createNewAnimal(req.body, animals);
+
 	res.json(req.body);
 });
 
