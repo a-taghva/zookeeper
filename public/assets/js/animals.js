@@ -2,8 +2,6 @@ const $animalForm = document.querySelector('#animals-form');
 const $displayArea = document.querySelector('#display-area');
 
 const printResults = resultArr => {
-  console.log(resultArr);
-
   const animalHTML = resultArr.map(({ id, name, personalityTraits, species, diet }) => {
     return `
   <div class="col-12 col-md-5 mb-3">
@@ -29,8 +27,19 @@ const getAnimals = (formData = {}) => {
     queryUrl += `${key}=${value}&`;
   });
 
-  console.log(queryUrl);
+  console.log("queryUrl:", queryUrl);
+  fetch(queryUrl)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      };
 
+      return alert('Error:', response.status);
+    })
+    .then(animalData => {
+      console.log("animalData:", animalData);
+      printResults(animalData);
+    });
 };
 
 const handleGetAnimalsSubmit = event => {
